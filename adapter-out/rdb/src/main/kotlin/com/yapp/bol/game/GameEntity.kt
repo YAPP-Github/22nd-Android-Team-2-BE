@@ -20,7 +20,7 @@ class GameEntity : AuditingEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "game_id")
-    var id: GameId = GameId(0)
+    var id: Long = 0
         protected set
 
     @Column(name = "name")
