@@ -1,7 +1,10 @@
 package com.yapp.bol.game.member
 
 import com.yapp.bol.AuditingEntity
+import com.yapp.bol.game.GameId
+import com.yapp.bol.group.member.MemberId
 import com.yapp.bol.season.SeasonEntity
+import com.yapp.bol.season.toDomain
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -46,3 +49,13 @@ class GameMemberEntity : AuditingEntity() {
     var winningPercentage: Double = 0.0
         protected set
 }
+
+internal fun GameMemberEntity.toDomain(): GameMember = GameMember(
+    id = GameMemberId(id),
+    gameId = GameId(gameId),
+    memberId = MemberId(memberId),
+    season = season.toDomain(),
+    finalScore = finalScore,
+    matchCount = matchCount,
+    winningPercentage = winningPercentage,
+)

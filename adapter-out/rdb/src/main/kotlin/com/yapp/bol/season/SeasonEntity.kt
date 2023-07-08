@@ -21,3 +21,7 @@ class SeasonEntity : AuditingEntity() {
     var groupId: Long = 0
         protected set
 }
+
+internal fun SeasonEntity.toDomain(): Season = Season(
+    id = SeasonId(id),
+)
