@@ -10,10 +10,13 @@ import com.yapp.bol.base.OBJECT
 import com.yapp.bol.base.OpenApiTag
 import com.yapp.bol.base.STRING
 import com.yapp.bol.file.FileService
+import com.yapp.bol.game.GameId
 import com.yapp.bol.group.dto.CheckAccessCodeRequest
 import com.yapp.bol.group.dto.CreateGroupRequest
 import com.yapp.bol.group.dto.GroupMemberList
 import com.yapp.bol.group.dto.GroupWithMemberCount
+import com.yapp.bol.group.member.HostMember
+import com.yapp.bol.group.member.MemberId
 import com.yapp.bol.group.member.MemberList
 import com.yapp.bol.group.member.MemberRole
 import com.yapp.bol.group.member.OwnerMember
@@ -116,6 +119,56 @@ class GroupControllerTest : ControllerTest() {
                         "content[].profileImageUrl" type STRING means "그룹 프로필 이미지 URL",
                         "content[].memberCount" type NUMBER means "그룹 멤버 수",
                         "hasNext" type BOOLEAN means "다음 페이지 존재 여부"
+                    )
+                )
+        }
+
+        test("리더보드 보기") {
+            val groupId = GroupId(1)
+            val gameId = GameId(123)
+
+            every { groupService.getLeaderBoard(groupId, gameId) } returns listOf(
+                LeaderBoardMember(
+                    member = HostMember(
+                        MemberId(1),
+                        userId = UserId(1),
+                        nickname = "난_1등",
+                    ),
+                    score = 100,
+                    winningPercentage = 0.95,
+                    matchCount = 12,
+                ),
+                LeaderBoardMember(
+                    member = HostMember(
+                        MemberId(2),
+                        userId = UserId(2),
+                        nickname = "게임안해",
+                    ),
+                    score = null,
+                    winningPercentage = null,
+                    matchCount = null,
+                )
+            )
+
+            get("/v1/group/{groupId}/game/{gameId}", arrayOf(groupId.value, gameId.value)) {}
+                .isStatus(200)
+                .makeDocument(
+                    DocumentInfo(
+                        identifier = "group/{method-name}",
+                        description = "게임 별 리더보드 보기",
+                        tag = OpenApiTag.GROUP
+                    ),
+                    pathParameters(
+                        "groupId" type NUMBER means "그룹 ID",
+                        "gameId" type NUMBER means "게임 ID",
+                    ),
+                    responseFields(
+                        "contents" type ARRAY means "그룹 목록",
+                        "contents[].id" type NUMBER means "맴버 ID",
+                        "contents[].nickname" type STRING means "맴버 닉네임",
+                        "contents[].rank" type NUMBER means "등수, 1부터 시작" isOptional true,
+                        "contents[].winningPercentage" type NUMBER means "승률 소수로 나옴 (반올림 없음), 0~1" isOptional true,
+                        "contents[].matchCount" type NUMBER means "총 플레이 횟수" isOptional true,
                     )
                 )
         }

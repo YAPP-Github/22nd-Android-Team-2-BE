@@ -3,15 +3,18 @@ package com.yapp.bol.group
 import com.yapp.bol.auth.getSecurityUserIdOrThrow
 import com.yapp.bol.file.FileService
 import com.yapp.bol.file.dto.FileResponse
+import com.yapp.bol.game.GameId
 import com.yapp.bol.group.dto.CheckAccessCodeRequest
 import com.yapp.bol.group.dto.CheckAccessCodeResponse
 import com.yapp.bol.group.dto.CreateGroupRequest
 import com.yapp.bol.group.dto.CreateGroupResponse
 import com.yapp.bol.group.dto.GroupDetailResponse
 import com.yapp.bol.group.dto.GroupListResponse
+import com.yapp.bol.group.dto.LeaderBoardResponse
 import com.yapp.bol.group.dto.toCreateGroupResponse
 import com.yapp.bol.group.dto.toDto
 import com.yapp.bol.group.dto.toListResponse
+import com.yapp.bol.group.dto.toResponse
 import com.yapp.bol.pagination.offset.PaginationOffsetResponse
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -60,6 +63,15 @@ class GroupController(
             pageNumber = pageNumber,
             pageSize = pageSize,
         ).mapContents { it.toListResponse() }
+
+    @GetMapping("/{groupId}/game/{gameId}")
+    fun getLeaderboard(
+        @PathVariable groupId: GroupId,
+        @PathVariable gameId: GameId,
+    ): LeaderBoardResponse {
+        val list = groupService.getLeaderBoard(groupId, gameId).mapIndexed { index, it -> it.toResponse(index + 1) }
+        return LeaderBoardResponse(list)
+    }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{groupId}")
