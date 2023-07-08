@@ -1,4 +1,4 @@
-package com.yapp.bol.game
+package com.yapp.bol.game.member
 
 import com.yapp.bol.AuditingEntity
 import com.yapp.bol.season.SeasonEntity

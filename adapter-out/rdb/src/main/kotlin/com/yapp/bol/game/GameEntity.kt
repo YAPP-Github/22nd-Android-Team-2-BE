@@ -44,4 +44,11 @@ class GameEntity : AuditingEntity() {
     @JoinColumn(name = "img_id")
     lateinit var img: FileEntity
         protected set
+
+    companion object {
+        fun of(id: Long) {
+            val game = GameEntity()
+            game.id = id
+        }
+    }
 }
