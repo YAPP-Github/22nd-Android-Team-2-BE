@@ -5,6 +5,8 @@ import com.yapp.bol.UnknownException
 import com.yapp.bol.auth.getSecurityUserIdOrThrow
 import com.yapp.bol.group.GroupService
 import com.yapp.bol.group.dto.toResponse
+import com.yapp.bol.onboarding.OnboardingService
+import com.yapp.bol.user.dto.CheckOnboardResponse
 import com.yapp.bol.user.dto.JoinedGroupResponse
 import com.yapp.bol.user.dto.MyInfoResponse
 import com.yapp.bol.user.dto.PutUserInfoRequest
@@ -21,7 +23,17 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService,
     private val groupService: GroupService,
+    private val onboardingService: OnboardingService
 ) {
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me/onboarding")
+    fun checkOnboard(): CheckOnboardResponse {
+        val userId = getSecurityUserIdOrThrow()
+        val onboardList = onboardingService.getRemainOnboarding(userId)
+
+        return CheckOnboardResponse(onboardList)
+    }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")

@@ -21,7 +21,6 @@ class AuthController(
         return LoginResponse(
             accessToken = authToken.accessToken.value,
             refreshToken = authToken.refreshToken?.value,
-            onboarding = onboardingService.getRemainOnboarding(authToken.accessToken.userId)
         )
     }
 }

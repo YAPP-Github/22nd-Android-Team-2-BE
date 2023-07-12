@@ -8,6 +8,8 @@ import com.yapp.bol.base.OpenApiTag
 import com.yapp.bol.base.STRING
 import com.yapp.bol.group.Group
 import com.yapp.bol.group.GroupService
+import com.yapp.bol.onboarding.OnboardingService
+import com.yapp.bol.onboarding.OnboardingType
 import com.yapp.bol.user.dto.PutUserInfoRequest
 import io.mockk.every
 import io.mockk.mockk
@@ -15,10 +17,30 @@ import io.mockk.mockk
 class UserControllerTest : ControllerTest() {
     private val userService: UserService = mockk()
     private val groupService: GroupService = mockk()
+    private val onboardingService: OnboardingService = mockk()
     override val controller: Any
-        get() = UserController(userService, groupService)
+        get() = UserController(userService, groupService, onboardingService)
 
     init {
+        test("온보딩 진행 정도 가져오기") {
+            val userId = UserId(124)
+            every { onboardingService.getRemainOnboarding(userId) } returns listOf(
+                OnboardingType.TERMS,
+                OnboardingType.NICKNAME,
+            )
+
+            get("/v1/user/me/onboarding") {
+                authorizationHeader(userId)
+            }
+                .isStatus(200)
+                .makeDocument(
+                    DocumentInfo(identifier = "user/{method-name}", tag = OpenApiTag.USER),
+                    responseFields(
+                        "onboarding" type ARRAY means "남은 온보딩 단계 ${OnboardingType.values().toList()}",
+                    )
+                )
+        }
+
         test("내 기본 정보 가져오기") {
             val user = User(
                 id = UserId(2220),

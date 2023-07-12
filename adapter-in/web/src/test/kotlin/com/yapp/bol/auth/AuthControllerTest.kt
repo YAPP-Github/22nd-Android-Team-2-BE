@@ -26,10 +26,6 @@ class AuthControllerTest : ControllerTest() {
                 Token("REFRESH_TOKEN", userId, LocalDateTime.now())
             )
             every { authService.login(any(), any()) } returns authToken
-            every { onboardingService.getRemainOnboarding(userId) } returns listOf(
-                OnboardingType.TERMS,
-                OnboardingType.NICKNAME,
-            )
 
             post("/v1/auth/login", request) {}
                 .isStatus(200)
@@ -42,7 +38,6 @@ class AuthControllerTest : ControllerTest() {
                     responseFields(
                         "accessToken" type STRING means "Access 토큰",
                         "refreshToken" type STRING means "Refresh 토큰" isOptional true,
-                        "onboarding" type ARRAY means "남은 온보딩 단계 ${OnboardingType.values().toList()}",
                     )
                 )
         }
