@@ -1,13 +1,11 @@
 package com.yapp.bol.auth
 
 import com.yapp.bol.auth.dto.LoginRequest
-import com.yapp.bol.base.ARRAY
 import com.yapp.bol.base.ControllerTest
 import com.yapp.bol.base.ENUM
 import com.yapp.bol.base.OpenApiTag
 import com.yapp.bol.base.STRING
 import com.yapp.bol.onboarding.OnboardingService
-import com.yapp.bol.onboarding.OnboardingType
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDateTime
